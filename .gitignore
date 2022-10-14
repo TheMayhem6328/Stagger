@@ -1,0 +1,12 @@
+# Mess-around
+Scratch.py
+Demo.json
+Audio
+
+# Cache
+.cache
+.cache_sp
+__pycache__
+
+# MacOS
+._*
