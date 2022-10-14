@@ -12,20 +12,19 @@ redirectURI = "http://127.0.0.1:8000/spotify/callback/"
 cache = spotipy.CacheFileHandler(".cache_sp")
 secret = spotipy.oauth2.SpotifyPKCE(clientID, redirectURI, cache_handler=cache, scope=["user-library-read"])
 
-# Define root class
-
 # Change cwd to the folder where this script is located
 workDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(workDir)
 
+# Check if folder `Audio` found - otherwise make one and exit
 try:
     fileList = os.listdir(".//Audio")
-    # fileList = ["Track.flac"] # [x for x in fileList2 if re.search("mp3",x)]
 except FileNotFoundError:
     os.mkdir(".//Audio")
     print("\nPut audio files the folder \"Audio\" to scan them\n")
     exit()
 
+# Check each file in folder `Audio`
 count, success, fail = 1, 0, 0
 for filename in fileList:
     print("< ========================================\n")
