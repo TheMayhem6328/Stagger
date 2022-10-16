@@ -2,6 +2,7 @@
 import spotipy
 from mutagen.flac      import FLAC
 from mutagen.mp3       import MP3
+from mutagen.mp3       import EasyMP3 as Eas
 from mutagen.oggvorbis import OggVorbis
 import os
 import Stagger
@@ -38,8 +39,8 @@ for filename in fileList:
         # Assign variables in relation to file type
         if   type(file) == FLAC or type(file) == OggVorbis:
             tag = Stagger.tag.vorbis
-        elif type(file) == MP3:
-            tag = Stagger.tag.id3
+        elif type(file) == Eas:
+            tag = Stagger.tag.vorbis
 
         titleTag       = tag[0]
         albumTag       = tag[3]
@@ -82,14 +83,15 @@ for filename in fileList:
                     trackAlbumSearch  == trackData[albumTag][0] and
                     trackArtistSearch == trackData[albumArtistTag][0]
                 ):
-                    ### Output data to STDOUT
-                    finalTrackData = {}
-                    for x in list(trackData.items()):
-                        print(str(x[0]) + ": " + str(x[1]))\
-
+                    ### Output data to STDOUT and overwrite file's tags
+                    indexCount = 0
+                    for x, y in list(trackData.items()):
+                        print(str(x) + ": " + str(y))
+                        temp = y
+                        Stagger.addTag(x, y, file)
+                        indexCount += 1
 
                     ### Save data to file and exit while loop
-                    file.update(trackData)
                     file.save()
                     print(f"\nSaved file {filename}")
                     success += 1

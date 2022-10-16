@@ -1,4 +1,4 @@
-"""This class contains all methods and data for Stagger. Feel free to reuse it :3"""
+"""This moduler contains all methods and data for Stagger. Feel free to reuse it :3"""
 
 # Initialization
 import spotipy
@@ -6,7 +6,44 @@ import mutagen
 from mutagen           import id3
 from mutagen.flac      import FLAC
 from mutagen.mp3       import MP3
+from mutagen.mp3       import EasyMP3
 from mutagen.oggvorbis import OggVorbis
+
+# Map extra EasyID3 tags
+for x in [
+        ("year"        ,  "TDRC"),
+        ("track"       ,  "TRCK"),
+        ("initialkey"  ,  "TKEY"),
+        ("origdate"    ,  "TDOR")
+]:
+    EasyMP3.ID3.RegisterTextKey(x[0], x[1])
+
+for x in [
+        "spotifyTrackID",
+        "spotifyAlbumID",
+        "itunesadvisory",
+        "tracktotal",
+        "disctotal"
+]:
+    EasyMP3.ID3.RegisterTXXXKey(x, x)
+
+# For reference
+"""
+Predefined text mappings in EasyID3 / EasyMP3
+    "album"                       :   "TALB"
+    "bpm"                         :   "TBPM"
+    "title"                       :   "TIT2"
+    "artist"                      :   "TPE1"
+    "albumartist"                 :   "TPE2"
+    "discnumber"                  :   "TPOS"
+    "tracknumber"                 :   "TRCK"
+    "isrc"                        :   "TSRC"
+    "barcode"                     :   "TXXX:BARCODE"
+
+Predefined function mappings in EasyID3 / EasyMP3
+    "Genre"                       : genre_*
+    "Date"                        : date_*
+"""
 
 # Define class containing tag list
 class tag:
@@ -18,30 +55,31 @@ class tag:
         "tracktotal",
         "album",
         "year",
-        "date",
+        "origdate",
         "albumartist",
         "discnumber",
         "disctotal",
         "bpm",
         "isrc",
-        "upc",
+        "barcode", # UPC
         "spotifyTrackID",
         "spotifyAlbumID",
-        "artists",
-        "releasetype",
-        "initialkey"
+        "artist",
+        "musicbrainz_albumtype",
+        "initialkey",
+        "itunesadvisory"
     ]
 
     id3 = [
         "TIT2",
         "TRCK",
-        "TRKN",
+        "TRCK",
         "TALB",
         "TDRC",
         "TDAT",
         "TPE2",
         "TPOS",
-        "DISK",
+        "TPOS",
         "TBPM",
         "TSRC",
         "TXXX:BARCODE",
@@ -53,7 +91,7 @@ class tag:
     ]
 
 # Find metadata in Spotify
-def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameList: list = None):
+def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameList: list = None) -> dict:
     """## Find metadata of `{query}` from spotify
 
     ### Args:
@@ -161,11 +199,11 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
         "E"   : "12B",
         "F"   : "7B",
         "Gb"  : "2B",
-        "G "  : "9B",
+        "G"  : "9B",
         "Ab"  : "4B",
         "A"   : "11B",
         "Bb"  : "6B",
-        "B "  : "1B",
+        "B"  : "1B",
         "Cm"  : "5A",
         "Dbm" : "12A",
         "Dm"  : "7A",
@@ -180,14 +218,15 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
         "Bm"  : "10A"
     }
 
-    ## Explicitness
-    if resultTrack["explicit"]:
-        trackAdd("itunesadvisory" ,['1'])
-    elif not resultTrack["explicit"]:
-        trackAdd("itunesadvisory" ,['0'])
-
     # Append to dictionary
     trackAdd(idList[16],[str(trackKey)]+[str(camelotMap[trackKey])])
+
+    ## Explicitness
+    if resultTrack["explicit"]:
+        trackAdd(idList[17] ,['1'])
+    elif not resultTrack["explicit"]:
+        trackAdd(idList[17] ,['0'])
+
 
     # Return Dictionary
     return trackMeta
@@ -212,13 +251,12 @@ def findTypeFunc(audioFileName: str):
         if filetype == FLAC:
             fileFunc = FLAC(audioFileName)
             print("Type: FLAC")
-        if filetype == OggVorbis:
+        elif filetype == OggVorbis:
             fileFunc = OggVorbis(audioFileName)
             print("Type: OGG Vorbis")
         elif filetype == MP3:
-            fileFunc = MP3(audioFileName)
+            fileFunc = EasyMP3(audioFileName)
             print("Type: MP3")
-            raise UnboundLocalError
         if fileFunc != None:
             return fileFunc
         else:
@@ -228,8 +266,21 @@ def findTypeFunc(audioFileName: str):
         return "UNSUPPORTED"
 
 # Define a function to make it simpler to add tags
-def addTag(tagName : str, tagData : list, file):
-    if type(file) == MP3:
-        file.update({tagName: id3.TextFrame(encoding=3, text=tagData )})
-    else:
+def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EasyMP3):
+    try:
+        file[tagName] = ""
+    except KeyError:
+        pass
+    if   type(file) == FLAC or type(file) == OggVorbis:
+        file.pop(tagName)
         file.update({tagName: tagData})
+    elif type(file) == EasyMP3:
+        if   tagName == "track":
+            tagName = "tracknumber"
+            file[tagName] = tagData
+        elif tagName == "track":
+            tagName = "tracknumber"
+            file[tagName] = tagData
+        else:
+            file[tagName] = tagData
+
