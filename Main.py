@@ -25,7 +25,7 @@ except FileNotFoundError:
     exit()
 
 # Check each file in folder `Audio`
-count, success, fail = 1, 0, 0
+count, success, fail = 0, 0, 0
 for filename in fileList:
     print("< ========================================\n")
 
