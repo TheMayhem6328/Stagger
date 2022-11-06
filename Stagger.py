@@ -60,7 +60,7 @@ class tag:
         "disctotal",
         "bpm",
         "isrc",
-        "barcode", # UPC
+        "barcode",
         "spotifyTrackID",
         "spotifyAlbumID",
         "artist",
@@ -240,9 +240,9 @@ def initTags(trackData: dict, nameList: list = None) -> None:
     - nameList (list): Contains a list of tags to clear. Defaults to `None`, which loads `tag.vorbis`
     """
     idList  = tag.vorbis if nameList == None else nameList
-    for tag in idList:
+    for tagName in idList:
         try:
-            del trackData[tag]
+            del trackData[tagName]
         except KeyError:
             pass
 
