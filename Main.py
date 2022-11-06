@@ -1,8 +1,7 @@
 # Initialization
 import spotipy
 from mutagen.flac      import FLAC
-from mutagen.mp3       import MP3
-from mutagen.mp3       import EasyMP3 as Eas
+from mutagen.mp3       import EasyMP3 as EMP3
 from mutagen.oggvorbis import OggVorbis
 import os
 import Stagger
@@ -39,7 +38,7 @@ for filename in fileList:
         # Assign variables in relation to file type
         if   type(file) == FLAC or type(file) == OggVorbis:
             tag = Stagger.tag.vorbis
-        elif type(file) == Eas:
+        elif type(file) == EMP3:
             tag = Stagger.tag.vorbis
 
         titleTag       = tag[0]

@@ -3,10 +3,9 @@
 # Initialization
 import spotipy
 import mutagen
-from mutagen           import id3
 from mutagen.flac      import FLAC
 from mutagen.mp3       import MP3
-from mutagen.mp3       import EasyMP3
+from mutagen.mp3       import EasyMP3 as EMP3
 from mutagen.oggvorbis import OggVorbis
 
 # Map extra EasyID3 tags
@@ -16,7 +15,7 @@ for x in [
         ("initialkey"  ,  "TKEY"),
         ("origdate"    ,  "TDOR")
 ]:
-    EasyMP3.ID3.RegisterTextKey(x[0], x[1])
+    EMP3.ID3.RegisterTextKey(x[0], x[1])
 
 for x in [
         "spotifyTrackID",
@@ -25,11 +24,11 @@ for x in [
         "tracktotal",
         "disctotal"
 ]:
-    EasyMP3.ID3.RegisterTXXXKey(x, x)
+    EMP3.ID3.RegisterTXXXKey(x, x)
 
 # For reference
 """
-Predefined text mappings in EasyID3 / EasyMP3
+Predefined text mappings in EasyID3 / EMP3
     "album"                       :   "TALB"
     "bpm"                         :   "TBPM"
     "title"                       :   "TIT2"
@@ -40,7 +39,7 @@ Predefined text mappings in EasyID3 / EasyMP3
     "isrc"                        :   "TSRC"
     "barcode"                     :   "TXXX:BARCODE"
 
-Predefined function mappings in EasyID3 / EasyMP3
+Predefined function mappings in EasyID3 / EMP3
     "Genre"                       : genre_*
     "Date"                        : date_*
 """
@@ -255,7 +254,7 @@ def findTypeFunc(audioFileName: str):
             fileFunc = OggVorbis(audioFileName)
             print("Type: OGG Vorbis")
         elif filetype == MP3:
-            fileFunc = EasyMP3(audioFileName)
+            fileFunc = EMP3(audioFileName)
             print("Type: MP3")
         if fileFunc != None:
             return fileFunc
@@ -266,7 +265,7 @@ def findTypeFunc(audioFileName: str):
         return "UNSUPPORTED"
 
 # Define a function to make it simpler to add tags
-def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EasyMP3):
+def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EMP3):
     try:
         file[tagName] = ""
     except KeyError:
@@ -274,7 +273,7 @@ def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EasyMP3):
     if   type(file) == FLAC or type(file) == OggVorbis:
         file.pop(tagName)
         file.update({tagName: tagData})
-    elif type(file) == EasyMP3:
+    elif type(file) == EMP3:
         if   tagName == "track":
             tagName = "tracknumber"
             file[tagName] = tagData
