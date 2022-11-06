@@ -82,6 +82,11 @@ for filename in fileList:
                     trackAlbumSearch  == trackData[albumTag][0] and
                     trackArtistSearch == trackData[albumArtistTag][0]
                 ):
+                    ### Clear previously existing tags
+                    Stagger.initTags(trackData, tag)
+                    file.save()
+                    print("\nPreviously existing tags removed")
+
                     ### Output data to STDOUT and overwrite file's tags
                     indexCount = 0
                     for x, y in list(trackData.items()):

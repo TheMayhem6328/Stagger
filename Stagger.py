@@ -78,7 +78,7 @@ class tag:
         "TDAT",
         "TPE2",
         "TPOS",
-        "TPOS",
+        "TXXX:TOTALDISCS",
         "TBPM",
         "TSRC",
         "TXXX:BARCODE",
@@ -229,6 +229,22 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
 
     # Return Dictionary
     return trackMeta
+
+
+# Remove existing tags
+def initTags(trackData: dict, nameList: list = None) -> None:
+    """## Clears all tags (as provided in `{nameList}`) from file
+
+    ### Args:
+    - trackData (dict): Contains the data of the file 
+    - nameList (list): Contains a list of tags to clear. Defaults to `None`, which loads `tag.vorbis`
+    """
+    idList  = tag.vorbis if nameList == None else nameList
+    for tag in idList:
+        try:
+            del trackData[tag]
+        except KeyError:
+            pass
 
 # Check audio encoding type and return it
 def findTypeFunc(audioFileName: str):
