@@ -5,6 +5,7 @@ from mutagen.mp3       import EasyMP3 as EMP3
 from mutagen.oggvorbis import OggVorbis
 import os
 import Stagger
+import sys
 
 # Setup variable(s)
 clientID    = "2531ad4b5e3c497ca0a9fce18d1280ab"
@@ -22,7 +23,7 @@ try:
 except FileNotFoundError:
     os.mkdir(".//Audio")
     print("\nPut audio files the folder \"Audio\" to scan them\n")
-    exit()
+    sys.exit()
 
 # Check each file in folder `Audio`
 count, success, fail = 0, 0, 0
