@@ -45,6 +45,7 @@ Predefined function mappings in EasyID3 / EMP3
     "Date"                        : date_*
 """
 
+
 # Define class containing tag list
 class tag:
     """Data values (list): `vorbis`, `id3`"""
@@ -90,8 +91,12 @@ class tag:
         "TKEY"
     ]
 
+
 # Find metadata in Spotify
-def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameList: list = None) -> dict:
+def trackMeta(query: str,
+              auth_mgr: spotipy.SpotifyOAuth,
+              index: int = 0,
+              nameList: list = None) -> dict:
     """## Find metadata of `{query}` from spotify
 
     ### Args:
@@ -105,14 +110,13 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
     ### Returns:
     - dict: Contains search result of `{query}`
     """
-
     # Initialize
     spotify = spotipy.Spotify(auth_manager=auth_mgr)
     idList  = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
 
     # Build query
     try:
-        result            = spotify.search(q=query,type="track")
+        result        = spotify.search(q=query, type="track")
     except KeyboardInterrupt:
         print("Operation terminated by user")
         print("\n======================================== >")
@@ -127,34 +131,34 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
 
     # Build dict
     trackMeta = {}
-    def trackAdd(key: str ,data: list): trackMeta.update({key : data})
+    def trackAdd(key: str, data: list): trackMeta.update({key : data})
 
 
     # Add simple ones
-    trackAdd(idList[0] ,[resultTrack["name"]])
-    trackAdd(idList[1] ,[str(resultTrack["track_number"])])
-    trackAdd(idList[2] ,[str(resultTrack["album"]["total_tracks"])])
-    trackAdd(idList[3] ,[resultTrack["album"]["name"]])
-    trackAdd(idList[4] ,[resultAlbum["release_date"][0:4]])
-    trackAdd(idList[5] ,[resultAlbum["release_date"]])
-    trackAdd(idList[6] ,[resultTrack["album"]["artists"][0]["name"]])
-    trackAdd(idList[7] ,[str(resultTrack["disc_number"])])
-    trackAdd(idList[8] ,[str(resultAlbum["tracks"]["items"][-1]["disc_number"])])
-    trackAdd(idList[9] ,[str(round(resultFeatures["tempo"]))])
-    trackAdd(idList[10],[resultTrack["external_ids"]["isrc"]])
-    trackAdd(idList[11],[resultAlbum["external_ids"]["upc"]])
-    trackAdd(idList[12],[resultTrack["id"]])
-    trackAdd(idList[13],[resultTrack["album"]["id"]])
+    trackAdd(idList[0] , [resultTrack["name"]])
+    trackAdd(idList[1] , [str(resultTrack["track_number"])])
+    trackAdd(idList[2] , [str(resultTrack["album"]["total_tracks"])])
+    trackAdd(idList[3] , [resultTrack["album"]["name"]])
+    trackAdd(idList[4] , [resultAlbum["release_date"][0:4]])
+    trackAdd(idList[5] , [resultAlbum["release_date"]])
+    trackAdd(idList[6] , [resultTrack["album"]["artists"][0]["name"]])
+    trackAdd(idList[7] , [str(resultTrack["disc_number"])])
+    trackAdd(idList[8] , [str(resultAlbum["tracks"]["items"][-1]["disc_number"])])
+    trackAdd(idList[9] , [str(round(resultFeatures["tempo"]))])
+    trackAdd(idList[10], [resultTrack["external_ids"]["isrc"]])
+    trackAdd(idList[11], [resultAlbum["external_ids"]["upc"]])
+    trackAdd(idList[12], [resultTrack["id"]])
+    trackAdd(idList[13], [resultTrack["album"]["id"]])
 
     # Do some manupilation to add a bit more complicated ones
 
     ## Artist
-    artist  = [str(resultTrack["artists"][0]["name"])]
+    artist = [str(resultTrack["artists"][0]["name"])]
     length = len(resultTrack["artists"])
     if length > 1:
         for x in range(1, length):
             artist = artist + [resultTrack["artists"][x]["name"]]
-    trackAdd(idList[14],artist)
+    trackAdd(idList[14], artist)
 
     ## Release type
     trackType = str(resultTrack["album"]["album_type"])
@@ -162,7 +166,7 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
         trackType = ["Single or EP"]
     else:
         trackType = [trackType.capitalize()]
-    trackAdd(idList[15],trackType)
+    trackAdd(idList[15], trackType)
 
     ## Key
 
@@ -184,11 +188,11 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
     }
 
     ### Account for musical mode (Minor or Major)
-    modeMap = ["m",""]
+    modeMap = ["m", ""]
 
     ### Find classical key
     key = str(resultFeatures["key"])
-    trackKey = keyMap[key]+modeMap[resultFeatures["mode"]]
+    trackKey = keyMap[key] + modeMap[resultFeatures["mode"]]
 
     ### Map classical key to camelot
     camelotMap = {
@@ -219,13 +223,13 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
     }
 
     # Append to dictionary
-    trackAdd(idList[16],[str(trackKey)]+[str(camelotMap[trackKey])])
+    trackAdd(idList[16], [str(trackKey)] + [str(camelotMap[trackKey])])
 
     ## Explicitness
     if resultTrack["explicit"]:
-        trackAdd(idList[17] ,['1'])
+        trackAdd(idList[17], ['1'])
     elif not resultTrack["explicit"]:
-        trackAdd(idList[17] ,['0'])
+        trackAdd(idList[17], ['0'])
 
 
     # Return Dictionary
@@ -237,15 +241,17 @@ def initTags(trackData: dict, nameList: list = None) -> None:
     """## Clears all tags (as provided in `{nameList}`) from file
 
     ### Args:
-    - trackData (dict): Contains the data of the file 
-    - nameList (list): Contains a list of tags to clear. Defaults to `None`, which loads `tag.vorbis`
+    - trackData (dict): Contains the data of the file
+    - nameList (list): Contains a list of tags to clear.
+                       Defaults to `None`, which loads `tag.vorbis`
     """
-    idList  = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
+    idList = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
     for tagName in idList:
         try:
             del trackData[tagName]
         except KeyError:
             pass
+
 
 # Check audio encoding type and return it
 def findTypeFunc(audioFileName: str):
@@ -256,9 +262,9 @@ def findTypeFunc(audioFileName: str):
 
     ### Returns (One Of):
     - function:      Returns function compatible with given file name
-    - "UNSUPPORTED": Returns this literal only if no compatible function for `{audioFileName}` was found
+    - "UNSUPPORTED": Returns this literal only if no compatible function for
+                     `{audioFileName}` was found
     """
-
     try:
         try:
             filetype = type(mutagen.File(audioFileName))
@@ -280,6 +286,7 @@ def findTypeFunc(audioFileName: str):
         print("Type: Undefined / Non-audio")
         return "UNSUPPORTED"
 
+
 # Define a function to make it simpler to add tags
 def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EMP3):
     try:
@@ -298,4 +305,3 @@ def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EMP3):
             file[tagName] = tagData
         else:
             file[tagName] = tagData
-
