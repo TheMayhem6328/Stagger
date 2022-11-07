@@ -27,7 +27,7 @@ for x in [
 ]:
     EMP3.ID3.RegisterTXXXKey(x, x)
 
-# For reference
+# For reference - skipcq: PYL-W0105
 """
 Predefined text mappings in EasyID3 / EMP3
     "album"                       :   "TALB"
@@ -275,8 +275,7 @@ def findTypeFunc(audioFileName: str):
             print("Type: MP3")
         if fileFunc != None: # skipcq: PTC-W0068
             return fileFunc
-        else:
-            return "UNSUPPORTED"
+        return "UNSUPPORTED"
     except UnboundLocalError:
         print("Type: Undefined / Non-audio")
         return "UNSUPPORTED"
