@@ -287,10 +287,10 @@ def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EMP3):
         file[tagName] = ""
     except KeyError:
         pass
-    if   type(file) == FLAC or type(file) == OggVorbis:
+    if   type(file) is FLAC or type(file) is OggVorbis:
         file.pop(tagName)
         file.update({tagName: tagData})
-    elif type(file) == EMP3:
+    elif type(file) is EMP3:
         if   tagName == "track":
             tagName = "tracknumber"
             file[tagName] = tagData
