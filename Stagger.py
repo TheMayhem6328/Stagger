@@ -139,7 +139,7 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
     trackAdd(idList[5] ,[resultAlbum["release_date"]])
     trackAdd(idList[6] ,[resultTrack["album"]["artists"][0]["name"]])
     trackAdd(idList[7] ,[str(resultTrack["disc_number"])])
-    trackAdd(idList[8] ,[str(resultAlbum["tracks"]["items"][len(resultAlbum["tracks"]["items"]) - 1]["disc_number"])])
+    trackAdd(idList[8] ,[str(resultAlbum["tracks"]["items"][-1]["disc_number"])])
     trackAdd(idList[9] ,[str(round(resultFeatures["tempo"]))])
     trackAdd(idList[10],[resultTrack["external_ids"]["isrc"]])
     trackAdd(idList[11],[resultAlbum["external_ids"]["upc"]])
