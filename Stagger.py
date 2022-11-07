@@ -108,7 +108,7 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
 
     # Initialize
     spotify = spotipy.Spotify(auth_manager=auth_mgr)
-    idList  = tag.vorbis if nameList == None else nameList
+    idList  = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
 
     # Build query
     try:
@@ -240,7 +240,7 @@ def initTags(trackData: dict, nameList: list = None) -> None:
     - trackData (dict): Contains the data of the file 
     - nameList (list): Contains a list of tags to clear. Defaults to `None`, which loads `tag.vorbis`
     """
-    idList  = tag.vorbis if nameList == None else nameList
+    idList  = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
     for tagName in idList:
         try:
             del trackData[tagName]
@@ -273,7 +273,7 @@ def findTypeFunc(audioFileName: str):
         elif filetype == MP3:
             fileFunc = EMP3(audioFileName)
             print("Type: MP3")
-        if fileFunc != None:
+        if fileFunc != None: # skipcq: PTC-W0068
             return fileFunc
         else:
             return "UNSUPPORTED"
