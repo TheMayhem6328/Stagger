@@ -7,6 +7,7 @@ from mutagen.flac      import FLAC
 from mutagen.mp3       import MP3
 from mutagen.mp3       import EasyMP3 as EMP3
 from mutagen.oggvorbis import OggVorbis
+import sys
 
 # Map extra EasyID3 tags
 for x in [
@@ -115,11 +116,11 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
     except KeyboardInterrupt:
         print("\Operation terminated by user")
         print("\n======================================== >")
-        exit()
+        sys.exit()
     except:
         print("Network error - try again when you have a working internet connection")
         print("\n======================================== >")
-        exit()
+        sys.exit()
     resultTrack       = spotify.track(track_id=result["tracks"]["items"][index]["id"])
     resultAlbum       = spotify.album(album_id=resultTrack["album"]["id"])
     resultFeatures    = spotify.audio_features(resultTrack["id"])[0]
