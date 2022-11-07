@@ -114,7 +114,7 @@ def trackMeta(query: str, auth_mgr: spotipy.SpotifyOAuth, index: int = 0, nameLi
     try:
         result            = spotify.search(q=query,type="track")
     except KeyboardInterrupt:
-        print("\Operation terminated by user")
+        print("Operation terminated by user")
         print("\n======================================== >")
         sys.exit()
     except:
