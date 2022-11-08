@@ -5,8 +5,8 @@ import spotipy
 import mutagen
 from mutagen.flac      import FLAC
 from mutagen.mp3       import MP3
-from mutagen.mp3       import EasyMP3 as EMP3
-from mutagen.oggvorbis import OggVorbis
+from mutagen.mp3       import EasyMP3   as EMP3
+from mutagen.oggvorbis import OggVorbis as OGGV
 import sys
 
 # Map extra EasyID3 tags
@@ -112,7 +112,8 @@ def trackMeta(query: str,
     """
     # Initialize
     spotify = spotipy.Spotify(auth_manager=auth_mgr)
-    idList  = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
+    # deepcode ignore change_to_is: Breaks code otherwise | skipcq: PTC-W0068
+    idList  = tag.vorbis if nameList == None else nameList
 
     # Build query
     try:
@@ -245,7 +246,8 @@ def initTags(trackData: dict, nameList: list = None) -> None:
     - nameList (list): Contains a list of tags to clear.
                        Defaults to `None`, which loads `tag.vorbis`
     """
-    idList = tag.vorbis if nameList == None else nameList # skipcq: PTC-W0068
+    # deepcode ignore change_to_is: Breaks code otherwise | skipcq: PTC-W0068
+    idList = tag.vorbis if nameList == None else nameList
     for tagName in idList:
         try:
             del trackData[tagName]
@@ -273,13 +275,14 @@ def findTypeFunc(audioFileName: str):
         if filetype == FLAC:
             fileFunc = FLAC(audioFileName)
             print("Type: FLAC")
-        elif filetype == OggVorbis:
-            fileFunc = OggVorbis(audioFileName)
+        elif filetype == OGGV:
+            fileFunc = OGGV(audioFileName)
             print("Type: OGG Vorbis")
         elif filetype == MP3:
             fileFunc = EMP3(audioFileName)
             print("Type: MP3")
-        if fileFunc != None: # skipcq: PTC-W0068
+        # deepcode ignore change_to_is: Breaks code otherwise | skipcq: PTC-W0068
+        if fileFunc != None: # 
             return fileFunc
         return "UNSUPPORTED"
     except UnboundLocalError:
@@ -288,12 +291,12 @@ def findTypeFunc(audioFileName: str):
 
 
 # Define a function to make it simpler to add tags
-def addTag(tagName : str, tagData : list, file: FLAC | OggVorbis | EMP3):
+def addTag(tagName : str, tagData : list, file: FLAC | OGGV | EMP3):
     try:
         file[tagName] = ""
     except KeyError:
         pass
-    if   type(file) is FLAC or type(file) is OggVorbis:
+    if   type(file) is FLAC or type(file) is OGGV:
         file.pop(tagName)
         file.update({tagName: tagData})
     elif type(file) is EMP3:

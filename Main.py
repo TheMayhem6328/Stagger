@@ -1,8 +1,8 @@
 # Initialization
 import spotipy
 from mutagen.flac      import FLAC
-from mutagen.mp3       import EasyMP3 as EMP3
-from mutagen.oggvorbis import OggVorbis
+from mutagen.mp3       import EasyMP3   as EMP3
+from mutagen.oggvorbis import OggVorbis as OGGV
 import os
 import Stagger
 import sys
@@ -37,9 +37,11 @@ for filename in fileList:
     # If file is supported
     if file != "UNSUPPORTED":
         # Assign variables in relation to file type
-        if   type(file) == FLAC or type(file) == OggVorbis:
-            tag = Stagger.tag.vorbis
-        elif type(file) == EMP3:
+        if (
+            type(file) == FLAC or
+            type(file) == OGGV or
+            type(file) == EMP3
+        ):
             tag = Stagger.tag.vorbis
 
         titleTag       = tag[0]
@@ -75,7 +77,7 @@ for filename in fileList:
             x = 0
             while True:
                 ## Accumulate data
-                trackData = Stagger.trackMeta(trackTitleSearch+" "+trackArtistSearch,secret, x, tag)
+                trackData = Stagger.trackMeta(trackTitleSearch + " " + trackArtistSearch, secret, x, tag)
 
                 ## Verify data
                 if (
