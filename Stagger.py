@@ -238,19 +238,33 @@ def trackMeta(query: str,
 
 
 # Remove existing tags
-def initTags(trackData: dict, nameList: list = None) -> None:
-    """## Clears all tags (as provided in `{nameList}`) from file
+def initTags(filename: str) -> None:
+    """## Clears all tags from file `{filename}`
 
     ### Args:
-    - trackData (dict): Contains the data of the file
-    - nameList (list): Contains a list of tags to clear.
-                       Defaults to `None`, which loads `tag.vorbis`
+    - filename (str): Contains the name of the file
     """
     # deepcode ignore change_to_is: Breaks code otherwise | skipcq: PTC-W0068
-    idList = tag.vorbis if nameList == None else nameList
+    file = mutagen.File(filename)
+    if (
+        type(file) is EMP3 or
+        type(file) is MP3
+    ):
+        idList = tag.id3
+        file = MP3(filename)
+    elif (
+        type(file) is OGGV or
+        type(file) is FLAC
+    ):
+        idList = tag.vorbis
+        if type(file) is OGGV:
+            file = OGGV(filename)
+        if type(file) is FLAC:
+            file = FLAC(filename) 
+        
     for tagName in idList:
         try:
-            del trackData[tagName]
+            del file[tagName]
         except KeyError:
             pass
 

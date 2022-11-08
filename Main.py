@@ -38,9 +38,9 @@ for filename in fileList:
     if file != "UNSUPPORTED":
         # Assign variables in relation to file type
         if (
-            type(file) == FLAC or
-            type(file) == OGGV or
-            type(file) == EMP3
+            type(file) is FLAC or
+            type(file) is OGGV or
+            type(file) is EMP3
         ):
             tag = Stagger.tag.vorbis
 
@@ -86,7 +86,7 @@ for filename in fileList:
                     trackArtistSearch == trackData[albumArtistTag][0]
                 ):
                     ### Clear previously existing tags
-                    Stagger.initTags(file, tag)
+                    Stagger.initTags(filename)
                     file.save()
                     print("Previously existing tags removed\n")
 
