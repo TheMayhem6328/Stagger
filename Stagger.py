@@ -110,6 +110,8 @@ def trackMeta(query: str,
     ### Returns:
     - dict: Contains search result of `{query}`
     """
+    __name__ = "Retrieve tag metadata"
+    
     # Initialize
     spotify = spotipy.Spotify(auth_manager=auth_mgr)
     # deepcode ignore change_to_is: Breaks code otherwise | skipcq: PTC-W0068
@@ -244,6 +246,8 @@ def initTags(filename: str) -> None:
     ### Args:
     - filename (str): Contains the name of the file
     """
+    __name__ = "Initialize Tags"
+    
     # deepcode ignore change_to_is: Breaks code otherwise | skipcq: PTC-W0068
     file = mutagen.File(filename)
     if (
@@ -281,6 +285,8 @@ def findTypeFunc(audioFileName: str):
     - "UNSUPPORTED": Returns this literal only if no compatible function for
                      `{audioFileName}` was found
     """
+    __name__ = "Find file type"
+    
     try:
         try:
             filetype = type(mutagen.File(audioFileName))
@@ -306,6 +312,8 @@ def findTypeFunc(audioFileName: str):
 
 # Define a function to make it simpler to add tags
 def addTag(tagName : str, tagData : list, file: FLAC | OGGV | EMP3):
+    __name__ = "Add Tag"
+    
     try:
         file[tagName] = ""
     except KeyError:

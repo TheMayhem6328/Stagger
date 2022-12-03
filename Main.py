@@ -12,6 +12,7 @@ clientID    = "2531ad4b5e3c497ca0a9fce18d1280ab"
 redirectURI = "http://127.0.0.1:8000/spotify/callback/"
 cache = spotipy.CacheFileHandler(".cache_sp")
 secret = spotipy.oauth2.SpotifyPKCE(clientID, redirectURI, cache_handler=cache, scope=["user-library-read"])
+filesave = False
 
 # Change cwd to the folder where this script is located
 workDir = os.path.dirname(os.path.abspath(__file__))
@@ -86,7 +87,7 @@ for filename in fileList:
                     trackArtistSearch == trackData[albumArtistTag][0]
                 ):
                     ### Clear previously existing tags
-                    Stagger.initTags(filename)
+                    Stagger.initTags(".//Audio//"+filename)
                     file.save()
                     print("Previously existing tags removed\n")
 
@@ -98,11 +99,15 @@ for filename in fileList:
                         Stagger.addTag(x, y, file)
                         indexCount += 1
 
-                    ### Save data to file and exit while loop
-                    file.save()
-                    print(f"\nSaved file {filename}")
+                    ### Save data to file and exit while loop (if {filesave} is True)
+                    if filesave:
+                        file.save()
+                        print(f"\nSaved file {filename}")
+                    else:
+                        print("\nFile saving disabled")
                     success += 1
                     break
+                        
 
                 else: ### If current search item didn't match existing, report
                     print(f"Search item {str(x+1).zfill(2)} doesn't match")
